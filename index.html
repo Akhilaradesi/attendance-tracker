@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: #000;
+            color: #fbbf24;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+            border: 4px solid #fbbf24;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .user-info {
+            background: #fbbf24;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        /* Login Form */
+        .login-form {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+            border: 4px solid #fbbf24;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .login-form h2 {
+            color: #000;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            border-color: #fbbf24;
+            outline: none;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: #000;
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+        }
+
+        .btn-primary:hover {
+            background: #333;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-warning {
+            background: #fbbf24;
+            color: #000;
+        }
+
+        .btn-warning:hover {
+            background: #f59e0b;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            background: #000;
+            padding: 20px;
+            border-radius: 15px;
+            border: 4px solid #fbbf24;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: #000;
+            color: #fbbf24;
+            border: 2px solid #fbbf24;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .nav-tab:hover {
+            background: #333;
+        }
+
+        .nav-tab.active {
+            background: #fbbf24;
+            color: #000;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.3);
+            border: 4px solid #fbbf24;
+        }
+
+        .card-header {
+            background: #000;
+            color: #fbbf24;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Holiday Control */
+        .holiday-control {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: 4px solid #7c3aed;
+        }
+
+        .holiday-control .card-header {
+            background: #6d28d9;
+        }
+
+        .holiday-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Period Attendance */
+        .period-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 2px solid #000;
+        }
+
+        .period-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Calendar */
+        .calendar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            border: 4px solid #fbbf24;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: #000;
+            color: #fbbf24;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-weight: bold;
+        }
+
+        .calendar-day:hover {
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .calendar-day.today {
+            background: #000;
+            color: #fbbf24;
+            border-color: #fbbf24;
+        }
+
+        .calendar-day.selected {
+            background: #fbbf24;
+            color: #000;
+            border-color: #000;
+        }
+
+        .calendar-day.holiday {
+            background: #10b981;
+            color: white;
+            border-color: #059669;
+        }
+
+        /* Statistics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            border: 4px solid #000;
+        }
+
+        .stat-card.primary {
+            background: #fbbf24;
+            color: #000;
+        }
+
+        .stat-card.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .stat-card.danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            border-color: #ef4444;
+            color: #991b1b;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .period-row {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .holiday-toggle {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Login Form -->
+        <div id="loginForm" class="login-form">
+            <h2>🎯 Attendance Tracker</h2>
+            <div class="alert alert-warning">
+                <strong>⚠️ Note:</strong> Data is saved only in your browser.
+            </div>
+            <div class="form-group">
+                <label for="userId">Your Personal ID</label>
+                <input type="text" id="userId" placeholder="e.g., student123" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+            </div>
+            <div class="form-group">
+                <label for="minAttendance">Minimum Attendance Required (%)</label>
+                <input type="number" id="minAttendance" min="0" max="100" value="75" required>
+            </div>
+            <button class="btn btn-primary" onclick="login()" style="width: 100%;">Continue</button>
+        </div>
+
+        <!-- Main App -->
+        <div id="mainApp" class="hidden">
+            <!-- Header -->
+            <div class="header">
+                <div class="user-info" id="userInfo">User ID: </div>
+                <h1>🎯 Attendance Tracker</h1>
+                <div style="margin-top: 20px;">
+                    <button class="btn btn-warning" onclick="resetAccount()">🔄 Reset</button>
+                    <button class="btn btn-danger" onclick="logout()">🚪 Logout</button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="showTab('today')">📅 Today</div>
+                <div class="nav-tab" onclick="showTab('statistics')">📈 Statistics</div>
+                <div class="nav-tab" onclick="showTab('history')">📚 History</div>
+                <div class="nav-tab" onclick="showTab('holidays')">🎉 Holidays</div>
+            </div>
+
+            <!-- Today Tab -->
+            <div id="todayTab" class="tab-content">
+                <div id="holidayAlert" class="alert alert-success hidden">
+                    <strong>🎉 Holiday Alert:</strong> This date is marked as a holiday.
+                </div>
+
+                <div class="grid-2">
+                    <!-- Calendar -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>📅 Select Date</h3>
+                        </div>
+                        <div class="calendar">
+                            <div class="calendar-header">
+                                <button class="btn btn-warning" onclick="changeMonth(-1)">◀</button>
+                                <h3 id="currentMonth">January 2025</h3>
+                                <button class="btn btn-warning" onclick="changeMonth(1)">▶</button>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid"></div>
+                        </div>
+                        <div style="margin-top: 20px; padding: 15px; background: #f3f4f6; border-radius: 10px;">
+                            <p><strong>Selected:</strong> <span id="selectedDateDisplay">Today</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div>
+                        <!-- Holiday Control -->
+                        <div class="card holiday-control">
+                            <div class="card-header">
+                                <h3>🎊 Holiday Control</h3>
+                            </div>
+                            <div class="holiday-toggle">
+                                <div>
+                                    <div style="font-size: 1.5rem;">🎉</div>
+                                    <div style="font-weight: bold;">Mark as Holiday</div>
+                                    <div>Skip attendance for this day</div>
+                                </div>
+                                <button id="holidayBtn" class="btn btn-success" onclick="toggleHoliday()">
+                                    🎉 Mark Holiday
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Attendance -->
+                        <div class="card" id="attendanceCard">
+                            <div class="card-header">
+                                <h3>✅ Mark Attendance</h3>
+                            </div>
+                            <div class="form-group">
+                                <label>Number of Periods</label>
+                                <select id="totalPeriods" onchange="updatePeriods()" style="width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 8px;">
+                                    <option value="1">1 Period</option>
+                                    <option value="2">2 Periods</option>
+                                    <option value="3">3 Periods</option>
+                                    <option value="4">4 Periods</option>
+                                    <option value="5">5 Periods</option>
+                                    <option value="6" selected>6 Periods</option>
+                                    <option value="7">7 Periods</option>
+                                    <option value="8">8 Periods</option>
+                                </select>
+                            </div>
+                            <div id="periodsContainer"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="card" id="saveSection">
+                    <button class="btn btn-primary" onclick="saveAttendance()" style="width: 100%; padding: 20px; font-size: 1.2rem;">
+                        💾 Save Attendance
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics Tab -->
+            <div id="statisticsTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📈 Statistics</h3>
+                    </div>
+                    <div id="statsAlert" class="alert"></div>
+                    <div class="stats-grid" id="statsGrid"></div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="historyTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>📚 History</h3>
+                    </div>
+                    <div id="historyContent"></div>
+                </div>
+            </div>
+
+            <!-- Holidays Tab -->
+            <div id="holidaysTab" class="tab-content hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🎉 Holidays</h3>
+                    </div>
+                    <div id="holidaysList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let attendanceData = {};
+        let holidays = [];
+        let selectedDate = new Date().toISOString().split('T')[0];
+        let currentMonth = new Date();
+        let periods = {};
+
+        // Initialize
+        window.onload = function() {
+            const savedUser = localStorage.getItem('attendanceUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                loadData();
+                showMainApp();
+            }
+            updateCalendar();
+        };
+
+        // Login
+        function login() {
+            const userId = document.getElementById('userId').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const minAttendance = parseInt(document.getElementById('minAttendance').value);
+
+            if (!userId || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            currentUser = { userId, password, minAttendanceRequired: minAttendance };
+            localStorage.setItem('attendanceUser', JSON.stringify(currentUser));
+            loadData();
+            showMainApp();
+        }
+
+        // Load data
+        function loadData() {
+            const savedData = localStorage.getItem(`attendanceData_${currentUser.userId}`);
+            if (savedData) attendanceData = JSON.parse(savedData);
+
+            const savedHolidays = localStorage.getItem(`holidays_${currentUser.userId}`);
+            if (savedHolidays) {
+                holidays = JSON.parse(savedHolidays);
+            } else {
+                holidays = [
+                    { id: '1', date: '2025-01-01', name: 'New Year', description: 'Holiday' },
+                    { id: '2', date: '2025-12-25', name: 'Christmas', description: 'Holiday' }
+                ];
+                saveHolidays();
+            }
+        }
+
+        // Save data
+        function saveData() {
+            localStorage.setItem(`attendanceData_${currentUser.userId}`, JSON.stringify(attendanceData));
+        }
+
+        function saveHolidays() {
+            localStorage.setItem(`holidays_${currentUser.userId}`, JSON.stringify(holidays));
+        }
+
+        // Show main app
+        function showMainApp() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('userInfo').textContent = `User ID: ${currentUser.userId}`;
+            updateCalendar();
+            updateSelectedDate();
+            updatePeriods();
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Logout?')) {
+                localStorage.removeItem('attendanceUser');
+                location.reload();
+            }
+        }
+
+        // Reset
+        function resetAccount() {
+            const password = prompt('Enter password to reset:');
+            if (password === currentUser.password) {
+                if (confirm('Delete all data?')) {
+                    attendanceData = {};
+                    holidays = [];
+                    saveData();
+                    saveHolidays();
+                    alert('Reset complete!');
+                    location.reload();
+                }
+            } else if (password !== null) {
+                alert('Wrong password!');
+            }
+        }
+
+        // Tab navigation
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName + 'Tab').classList.remove('hidden');
+            event.target.classList.add('active');
+
+            if (tabName === 'statistics') updateStats();
+            if (tabName === 'history') updateHistory();
+            if (tabName === 'holidays') updateHolidaysList();
+        }
+
+        // Calendar
+        function updateCalendar() {
+            const year = currentMonth.getFullYear();
+            const month = currentMonth.getMonth();
+            
+            document.getElementById('currentMonth').textContent = 
+                currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Day headers
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                const header = document.createElement('div');
+                header.style.textAlign = 'center';
+                header.style.fontWeight = 'bold';
+                header.style.padding = '10px';
+                header.style.background = '#f3f4f6';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            // Empty cells
+            for (let i = 0; i < firstDay; i++) {
+                grid.appendChild(document.createElement('div'));
+            }
+
+            // Days
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayEl = document.createElement('div');
+                dayEl.className = 'calendar-day';
+                dayEl.textContent = day;
+                
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                if (dateStr === new Date().toISOString().split('T')[0]) {
+                    dayEl.classList.add('today');
+                }
+                if (dateStr === selectedDate) {
+                    dayEl.classList.add('selected');
+                }
+                if (isHoliday(dateStr)) {
+                    dayEl.classList.add('holiday');
+                }
+                
+                dayEl.onclick = () => selectDate(dateStr);
+                grid.appendChild(dayEl);
+            }
+        }
+
+        function changeMonth(dir) {
+            currentMonth.setMonth(currentMonth.getMonth() + dir);
+            updateCalendar();
+        }
+
+        function selectDate(dateStr) {
+            selectedDate = dateStr;
+            updateCalendar();
+            updateSelectedDate();
+            
+            if (attendanceData[selectedDate]) {
+                const record = attendanceData[selectedDate];
+                periods = record.periods;
+                document.getElementById('totalPeriods').value = record.totalPeriods;
+            } else {
+                periods = {};
+            }
+            updatePeriods();
+        }
+
+        function updateSelectedDate() {
+            const date = new Date(selectedDate);
+            document.getElementById('selectedDateDisplay').textContent = 
+                date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+            
+            const isHol = isHoliday(selectedDate);
+            const holidayAlert = document.getElementById('holidayAlert');
+            const holidayBtn = document.getElementById('holidayBtn');
+            const attendanceCard = document.getElementById('attendanceCard');
+            const saveSection = document.getElementById('saveSection');
+            
+            if (isHol) {
+                holidayAlert.classList.remove('hidden');
+                holidayBtn.textContent = '❌ Remove Holiday';
+                holidayBtn.className = 'btn btn-danger';
+                attendanceCard.style.opacity = '0.5';
+                saveSection.classList.add('hidden');
+            } else {
+                holidayAlert.classList.add('hidden');
+                holidayBtn.textContent = '🎉 Mark Holiday';
+                holidayBtn.className = 'btn btn-success';
+                attendanceCard.style.opacity = '1';
+                saveSection.classList.remove('hidden');
+            }
+        }
+
+        // Holiday functions
+        function isHoliday(dateStr) {
+            return holidays.some(h => h.date === dateStr);
+        }
+
+        function toggleHoliday() {
+            if (isHoliday(selectedDate)) {
+                holidays = holidays.filter(h => h.date !== selectedDate);
+                alert('Holiday removed!');
+            } else {
+                const date = new Date(selectedDate);
+                holidays.push({
+                    id: Date.now().toString(),
+                    date: selectedDate,
+                    name: `Holiday - ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`,
+                    description: 'No classes'
+                });
+                alert('Holiday added!');
+            }
+            saveHolidays();
+            updateCalendar();
+            updateSelectedDate();
+        }
+
+        // Periods
+        function updatePeriods() {
+            const total = parseInt(document.getElementById('totalPeriods').value);
+            const container = document.getElementById('periodsContainer');
+            container.innerHTML = '';
+            
+            if (isHoliday(selectedDate)) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="font-size: 3rem;">🎉</div>
+                        <h3 style="color: #10b981;">Holiday - No Attendance Required</h3>
+                    </div>
+                `;
+                return;
+            }
+            
+            for (let i = 1; i <= total; i++) {
+                const row = document.createElement('div');
+                row.className = 'period-row';
+                
+                const status = periods[i] || 'not-counted';
+                
+                row.innerHTML = `
+                    <div style="font-weight: bold;">Period ${i}</div>
+                    <div class="period-buttons">
+                        <button class="btn ${status === 'present' ? 'btn-warning' : 'btn-secondary'}" 
+                                onclick="setPeriod(${i}, 'present')">Present</button>
+                        <button class="btn ${status === 'absent' ? 'btn-danger' : 'btn-secondary'}" 
+                                onclick="setPeriod(${i}, 'absent')">Absent</button>
+                        <button class="btn ${status === 'not-counted' ? 'btn-secondary' : 'btn-secondary'}" 
+                                onclick="setPeriod(${i}, 'not-counted')">Not Counted</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            }
+        }
+
+        function setPeriod(num, status) {
+            periods[num] = status;
+            updatePeriods();
+        }
+
+        // Save attendance
+        function saveAttendance() {
+            if (isHoliday(selectedDate)) {
+                alert('Cannot save for holidays!');
+                return;
+            }
+            
+            attendanceData[selectedDate] = {
+                date: selectedDate,
+                periods: periods,
+                totalPeriods: parseInt(document.getElementById('totalPeriods').value)
+            };
+            
+            saveData();
+            alert('Saved successfully!');
+        }
+
+        // Statistics
+        function updateStats() {
+            let totalPresent = 0, totalAbsent = 0, totalPeriods = 0, daysTracked = 0;
+
+            Object.values(attendanceData).forEach(record => {
+                daysTracked++;
+                Object.values(record.periods).forEach(status => {
+                    if (status === 'present') {
+                        totalPresent++;
+                        totalPeriods++;
+                    } else if (status === 'absent') {
+                        totalAbsent++;
+                        totalPeriods++;
+                    }
+                });
+            });
+
+            const percentage = totalPeriods > 0 ? Math.round((totalPresent / totalPeriods) * 100) : 0;
+            const isGood = percentage >= currentUser.minAttendanceRequired;
+
+            document.getElementById('statsAlert').className = `alert ${isGood ? 'alert-success' : 'alert-danger'}`;
+            document.getElementById('statsAlert').innerHTML = isGood ? 
+                `<strong>✅ Great!</strong> ${percentage}% attendance (Required: ${currentUser.minAttendanceRequired}%)` :
+                `<strong>⚠️ Warning!</strong> ${percentage}% attendance (Required: ${currentUser.minAttendanceRequired}%)`;
+
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card primary">
+                    <div class="stat-value">${daysTracked}</div>
+                    <div>Days Tracked</div>
+                </div>
+                <div class="stat-card ${isGood ? 'success' : 'danger'}">
+                    <div class="stat-value">${percentage}%</div>
+                    <div>Attendance</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-value">${totalPresent}</div>
+                    <div>Present</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-value">${totalAbsent}</div>
+                    <div>Absent</div>
+                </div>
+            `;
+        }
+
+        // History
+        function updateHistory() {
+            const content = document.getElementById('historyContent');
+            const records = Object.values(attendanceData).sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (records.length === 0) {
+                content.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">No records yet!</div>';
+                return;
+            }
+            
+            let html = '';
+            records.forEach(record => {
+                const date = new Date(record.date).toLocaleDateString('en-US', { 
+                    year: 'numeric', month: 'long', day: 'numeric' 
+                });
+                
+                let periodsHtml = '';
+                Object.entries(record.periods).forEach(([num, status]) => {
+                    const color = status === 'present' ? 'success' : status === 'absent' ? 'danger' : 'secondary';
+                    periodsHtml += `<span class="btn btn-${color}" style="margin: 2px; padding: 5px 10px; font-size: 12px;">P${num}: ${status}</span>`;
+                });
+                
+                html += `
+                    <div style="border: 2px solid #000; border-radius: 10px; padding: 20px; margin-bottom: 20px; background: #f9fafb;">
+                        <h4 style="margin-bottom: 15px;">${date}</h4>
+                        <div>${periodsHtml}</div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        // Holidays list
+        function updateHolidaysList() {
+            const list = document.getElementById('holidaysList');
+            
+            if (holidays.length === 0) {
+                list.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">No holidays added!</div>';
+                return;
+            }
+            
+            let html = '';
+            holidays.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(holiday => {
+                const date = new Date(holiday.date).toLocaleDateString('en-US', { 
+                    year: 'numeric', month: 'long', day: 'numeric' 
+                });
+                
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #d1fae5; border: 2px solid #10b981; border-radius: 10px; margin-bottom: 10px;">
+                        <div>
+                            <div style="font-weight: bold;">🎉 ${holiday.name}</div>
+                            <div style="color: #047857; font-size: 14px;">${date}</div>
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteHoliday('${holiday.id}')">Delete</button>
+                    </div>
+                `;
+            });
+            
+            list.innerHTML = html;
+        }
+
+        function deleteHoliday(id) {
+            if (confirm('Delete holiday?')) {
+                holidays = holidays.filter(h => h.id !== id);
+                saveHolidays();
+                updateCalendar();
+                updateSelectedDate();
+                updateHolidaysList();
+            }
+        }
+    </script>
+</body>
+</html>
